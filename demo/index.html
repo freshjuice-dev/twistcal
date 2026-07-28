@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TwistCal — Add to Calendar Demo</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #1f2937; }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { font-size: 18px; margin: 32px 0 12px; color: #6b7280; font-weight: 600; }
+    .demo { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; margin-bottom: 32px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; background: #fff; }
+    .card h3 { margin-bottom: 12px; font-size: 16px; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    pre { background: #f9fafb; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+    .muted { color: #6b7280; font-size: 14px; }
+    .triggers { display: flex; flex-wrap: wrap; gap: 12px; }
+    .triggers button, .triggers a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; font-size: 14px; font-weight: 600;
+      border: none; border-radius: 8px; cursor: pointer; text-decoration: none;
+    }
+    .t-google { background: #4285f4; color: #fff; }
+    .t-google:hover { background: #3367d6; }
+    .t-outlook { background: #0078d4; color: #fff; }
+    .t-outlook:hover { background: #106ebe; }
+    .t-yahoo { background: #6001d2; color: #fff; }
+    .t-yahoo:hover { background: #4a00a8; }
+    .t-ics { background: #1f2937; color: #fff; }
+    .t-ics:hover { background: #111827; }
+  </style>
+</head>
+<body>
+  <h1>TwistCal</h1>
+  <p class="muted">Lightweight, zero-dependency "Add to Calendar" web component. Shadow DOM. Apache-2.0.</p>
+
+  <h2>Web component (attributes)</h2>
+  <div class="demo">
+    <twist-cal
+      title="Product Launch Webinar"
+      start="2026-02-10T14:00:00"
+      end="2026-02-10T15:30:00"
+      location="Online"
+      description="Join us for the launch of TwistCal v1. A 90-minute walkthrough of the add-to-calendar component, ICS generation, and calendar deep links."
+    ></twist-cal>
+  </div>
+
+  <h2>Declarative triggers (custom buttons)</h2>
+  <div class="demo">
+    <div class="triggers">
+      <button class="t-google" data-twistcal
+        data-twistcal-action="google"
+        data-twistcal-title="Product Launch Webinar"
+        data-twistcal-start="2026-02-10T14:00:00"
+        data-twistcal-end="2026-02-10T15:30:00"
+        data-twistcal-location="Online">Google Calendar</button>
+
+      <button class="t-outlook" data-twistcal
+        data-twistcal-action="outlook"
+        data-twistcal-title="Product Launch Webinar"
+        data-twistcal-start="2026-02-10T14:00:00"
+        data-twistcal-end="2026-02-10T15:30:00">Outlook</button>
+
+      <button class="t-yahoo" data-twistcal
+        data-twistcal-action="yahoo"
+        data-twistcal-title="Product Launch Webinar"
+        data-twistcal-start="2026-02-10T14:00:00"
+        data-twistcal-end="2026-02-10T15:30:00">Yahoo</button>
+
+      <button class="t-ics" data-twistcal
+        data-twistcal-action="ics"
+        data-twistcal-title="Product Launch Webinar"
+        data-twistcal-start="2026-02-10T14:00:00"
+        data-twistcal-end="2026-02-10T15:30:00">.ics</button>
+    </div>
+  </div>
+
+  <h2>Programmatic (import)</h2>
+  <div class="demo">
+    <div id="mount"></div>
+  </div>
+
+  <h2>JSON-in-script (rich data)</h2>
+  <div class="demo">
+    <twist-cal label="Add to my calendar">
+      <script type="application/json">
+      {
+        "title": "Quarterly Review — Q1 2026",
+        "start": "2026-03-15T09:00:00",
+        "end": "2026-03-15T10:00:00",
+        "location": "Conference Room B, 4th Floor",
+        "description": "Bring your Q1 metrics. Slides due to Alex by EOD Wednesday.\nDial-in: +1-555-0100, code 4521#",
+        "url": "https://twistcal.com/demo"
+      }
+      </script>
+    </twist-cal>
+  </div>
+
+  <h2>Timezone-pinned (Oslo event, Miami visitor)</h2>
+  <div class="demo">
+    <twist-cal
+      title="Oslo Team Sync"
+      start="2026-01-15T10:00:00"
+      end="2026-01-15T11:00:00"
+      timezone="Europe/Oslo"
+      location="Oslo Office"
+      description="10:00 Oslo time. Click to add — your calendar gets the correct UTC instant.">
+    </twist-cal>
+  </div>
+
+  <h2>How it works</h2>
+  <pre>&lt;script type="module" src="../src/twistcal.js"&gt;&lt;/script&gt;
+
+&lt;!-- Web component --&gt;
+&lt;twist-cal title="My Event" start="2026-01-15T10:00:00" end="2026-01-15T11:00:00"&gt;
+&lt;/twist-cal&gt;
+
+&lt;!-- Custom trigger --&gt;
+&lt;button data-twistcal data-twistcal-action="google"
+  data-twistcal-title="My Event"
+  data-twistcal-start="2026-01-15T10:00:00"
+  data-twistcal-end="2026-01-15T11:00:00"&gt;Add to Google&lt;/button&gt;</pre>
+
+  <script type="module">
+    import { createButton } from '../src/twistcal.js';
+    createButton(document.getElementById('mount'), {
+      title: 'Coffee with the Team',
+      start: '2026-01-20T11:00:00',
+      end: '2026-01-20T11:45:00',
+      location: 'Blue Bottle, 3rd St',
+      description: 'Casual sync. No agenda.'
+    });
+  </script>
+</body>
+</html>

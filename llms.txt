@@ -1,0 +1,89 @@
+# TwistCal
+
+> Zero-dependency "Add to Calendar" web component + declarative triggers + programmatic API. Shadow DOM. Apache-2.0. 16 KB.
+
+## Install
+
+```
+npm install @freshjuice/twistcal
+```
+
+CDN (self-executing, no build step):
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/@freshjuice/twistcal@0.1.0/src/twistcal.js"></script>
+```
+
+## Three usage modes
+
+### 1. Web component — `<twist-cal>`
+
+Renders a styled dropdown button (Google, Outlook, Yahoo, .ics). Auto-registers via `customElements.define()` on import.
+
+```html
+<twist-cal
+  title="Team Sync"
+  start="2026-01-15T10:00:00"
+  end="2026-01-15T11:00:00"
+  location="Room A"
+  description="Weekly standup"
+  timezone="Europe/Oslo">
+</twist-cal>
+```
+
+Attributes: `title` (required), `start` (required), `end` (required), `description`, `location`, `url`, `timezone` (IANA), `label` (default "Add to Calendar").
+
+Event data can also be passed as JSON via a child `<script type="application/json">`.
+
+Styling via CSS custom properties on the host: `--tc-btn-bg` (#2563eb), `--tc-btn-bg-hover` (#1d4ed8), `--tc-text` (#fff), `--tc-radius` (8px), `--tc-font` (system stack).
+
+### 2. Declarative triggers — `data-twistcal`
+
+Any element with `data-twistcal` becomes a calendar trigger. Auto-initializes on `DOMContentLoaded`. No JS needed.
+
+```html
+<button data-twistcal
+  data-twistcal-action="google"
+  data-twistcal-title="Team Sync"
+  data-twistcal-start="2026-01-15T10:00:00"
+  data-twistcal-end="2026-01-15T11:00:00"
+  data-twistcal-location="Room A">Add to Google</button>
+```
+
+Action values: `google`, `outlook`, `yahoo`, `ics`.
+
+Event attributes: `data-twistcal-title` (required), `data-twistcal-start` (required), `data-twistcal-end` (required), `data-twistcal-description`, `data-twistcal-location`, `data-twistcal-url`, `data-twistcal-timezone`.
+
+### 3. Programmatic API
+
+```js
+import {
+  createButton,      // (target: HTMLElement, event: object) => HTMLElement
+  bindTrigger,       // (el: HTMLElement, action: string, event?: object) => void
+  autoInit,          // (scope?: HTMLElement | Document) => void
+  generateICS,       // (event: object) => string | null
+  googleUrl,         // (event: object) => string | null
+  outlookUrl,        // (event: object) => string | null
+  yahooUrl,          // (event: object) => string | null
+  downloadICS        // (event: object) => void
+} from '@freshjuice/twistcal';
+```
+
+Event object shape: `{ title, start, end, description?, location?, url?, timezone? }`
+
+- `start`/`end`: ISO 8601. With offset (`Z` or `+05:00`) → absolute time. Without offset → local time, converted to UTC.
+- `timezone`: IANA name (e.g. `Europe/Oslo`). Interprets naive `start`/`end` as wall-clock in that zone. DST-aware via `Intl.DateTimeFormat`. Ignored if `start`/`end` already carry an offset.
+
+## Calendar services
+
+- Google Calendar: deep link to `calendar.google.com/calendar/render` compose
+- Microsoft Outlook: deep link to `outlook.live.com/calendar/0/deeplink/compose`
+- Yahoo Calendar: deep link to `calendar.yahoo.com` compose
+- Apple Calendar / any iCalendar app: RFC 5545 `.ics` file download via Blob URL
+
+## Browser support
+
+Chrome 54+, Firefox 63+, Safari 10.1+. Uses Custom Elements v1, Shadow DOM v1, ES modules. No polyfills.
+
+## License
+
+Apache-2.0

@@ -1,0 +1,64 @@
+{
+  "name": "@freshjuice/twistcal",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Lightweight zero-dependency Add to Calendar web component with Shadow DOM",
+  "main": "src/twistcal.js",
+  "module": "src/twistcal.js",
+  "exports": {
+    ".": {
+      "default": "./src/twistcal.js"
+    },
+    "./src/*": "./src/*.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "LICENSE",
+    "README.md",
+    "llms.txt"
+  ],
+  "sideEffects": true,
+  "scripts": {
+    "dev": "node server.js",
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": [
+    "calendar",
+    "add-to-calendar",
+    "ics",
+    "icalendar",
+    "google-calendar",
+    "outlook",
+    "yahoo-calendar",
+    "web-component",
+    "custom-element",
+    "shadow-dom",
+    "zero-dependency",
+    "calendar-deeplink"
+  ],
+  "author": {
+    "name": "FreshJuice",
+    "email": "contact@freshjuice.dev",
+    "url": "https://freshjuice.dev/"
+  },
+  "contributors": [
+    {
+      "name": "Alex Zappa",
+      "email": "alex@zappa.dev",
+      "url": "https://alex.zappa.dev/"
+    }
+  ],
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/freshjuice-dev/twistcal.git"
+  },
+  "homepage": "https://twistcal.com",
+  "bugs": {
+    "url": "https://github.com/freshjuice-dev/twistcal/issues"
+  }
+}
