@@ -1,5 +1,6 @@
 # TwistCal
 
+> ⚠️ PRIVATE REPOSITORY — Proprietary and confidential. See [LICENSE](LICENSE).
 Lightweight, zero-dependency **Add to Calendar** web component. Shadow DOM, Apache-2.0, ~6 KB.
 
 Three ways to use it:
