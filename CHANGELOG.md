@@ -35,7 +35,7 @@ First stable release. Zero-dependency "Add to Calendar" web component with Shado
 | `dist/twistcal.min.js` | IIFE | 19 KB | Yes | All 12 |
 | `dist/twistcal.slim.min.js` | IIFE | 11 KB | No | All 12 |
 | `dist/twistcal.esm.min.js` | ESM | 19 KB | Yes | All 12 |
-| `dist/twistcal.generators.min.js` | IIFE | 3 KB | — | — |
+| `dist/twistcal.generators.esm.min.js` | ESM | 3 KB | — | — |
 
 ### CDN
 All CDN links use jsdelivr: `https://cdn.jsdelivr.net/npm/@freshjuice/twistcal/dist/twistcal.min.js`

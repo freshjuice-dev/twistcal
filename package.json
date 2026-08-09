@@ -18,8 +18,7 @@
     },
     "./generators": {
       "types": "./dist/generators.d.ts",
-      "import": "./dist/twistcal.generators.esm.min.js",
-      "default": "./dist/twistcal.generators.min.js"
+      "import": "./dist/twistcal.generators.esm.min.js"
     },
     "./src/*": "./src/*.js",
     "./package.json": "./package.json"
