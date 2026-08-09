@@ -144,8 +144,8 @@ if (typeof HTMLElement !== 'undefined') {
         </button>
         <div class="tc-menu" role="menu">
           ${items}
-          ${branding}
         </div>
+        ${branding}
       </div>
     `;
     this._bind(root);
