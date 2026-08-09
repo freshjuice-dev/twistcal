@@ -76,6 +76,9 @@ const STYLES = `
 .tc-item:focus-visible { outline: var(--tc-focus, 2px solid #60a5fa); outline-offset: var(--tc-focus-offset, -2px); }
 .tc-icon { width: var(--tc-icon-size, 16px); height: var(--tc-icon-size, 16px); flex-shrink: 0; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
 .tc-btn-icon { width: var(--tc-btn-icon-size, 16px); height: var(--tc-btn-icon-size, 16px); flex-shrink: 0; opacity: var(--tc-btn-icon-opacity, 0.8); }
+.tc-brand { padding: var(--tc-brand-padding, 6px 12px); text-align: right; }
+.tc-brand a { font-size: var(--tc-brand-fs, 11px); color: var(--tc-brand-color, #9ca3af); text-decoration: none; }
+.tc-brand a:hover { color: var(--tc-brand-hover, #6b7280); }
 `;
 
 // Calendar icon for the button — Phosphor-style, baked in, tiny
@@ -130,6 +133,8 @@ if (typeof HTMLElement !== 'undefined') {
       const k = ikey[c] || c;
       return `<a class="tc-item" role="menuitem" data-action="${action}" href="#" tabindex="0">${icon(ICONS[k])} ${t.services[k]}</a>`;
     }).join('\n          ');
+    const showBranding = this.getAttribute('branding') !== 'false';
+    const branding = showBranding ? '<div class="tc-brand"><a href="https://twistcal.com" target="_blank" rel="noopener">Powered by TwistCal</a></div>' : '';
     root.innerHTML = `
       <style>${STYLES}</style>
       <div class="tc-wrap" data-variant="${variant}">
@@ -139,6 +144,7 @@ if (typeof HTMLElement !== 'undefined') {
         </button>
         <div class="tc-menu" role="menu">
           ${items}
+          ${branding}
         </div>
       </div>
     `;
