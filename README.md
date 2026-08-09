@@ -1,5 +1,10 @@
 # TwistCal
 
+[![npm](https://img.shields.io/npm/v/@freshjuice/twistcal)](https://www.npmjs.com/package/@freshjuice/twistcal)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/freshjuice-dev/twistcal)](https://github.com/freshjuice-dev/twistcal/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/freshjuice-dev/twistcal)](https://github.com/freshjuice-dev/twistcal/network/members)
+
 Lightweight, zero-dependency **Add to Calendar** web component. Shadow DOM, Apache-2.0, 19 KB minified (11 KB slim).
 
 Three ways to use it:
