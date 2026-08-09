@@ -76,7 +76,7 @@ const STYLES = `
 .tc-item:focus-visible { outline: var(--tc-focus, 2px solid #60a5fa); outline-offset: var(--tc-focus-offset, -2px); }
 .tc-icon { width: var(--tc-icon-size, 16px); height: var(--tc-icon-size, 16px); flex-shrink: 0; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
 .tc-btn-icon { width: var(--tc-btn-icon-size, 16px); height: var(--tc-btn-icon-size, 16px); flex-shrink: 0; opacity: var(--tc-btn-icon-opacity, 0.8); }
-.tc-brand { padding: var(--tc-brand-padding, 6px 12px); text-align: right; }
+.tc-brand { position: absolute; left: 0; right: 0; bottom: calc(-1 * (var(--tc-brand-fs, 11px) + var(--tc-brand-padding, 4px) * 2 + 1px)); padding: var(--tc-brand-padding, 4px 12px); text-align: right; }
 .tc-brand a { font-size: var(--tc-brand-fs, 11px); color: var(--tc-brand-color, #9ca3af); text-decoration: none; }
 .tc-brand a:hover { color: var(--tc-brand-hover, #6b7280); }
 `;
@@ -144,8 +144,8 @@ if (typeof HTMLElement !== 'undefined') {
         </button>
         <div class="tc-menu" role="menu">
           ${items}
+          ${branding}
         </div>
-        ${branding}
       </div>
     `;
     this._bind(root);
