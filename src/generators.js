@@ -57,6 +57,12 @@ function formatICSDate(date) {
   return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
 }
 
+function formatICSDateDay(date) {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return null;
+  return d.toISOString().slice(0, 10).replace(/-/g, '');
+}
+
 // RFC 5545 line folding: 75 octets, continuation prefixed with space
 function foldLine(line) {
   if (line.length <= 75) return line;
@@ -72,8 +78,9 @@ function foldLine(line) {
 
 export function generateICS(event) {
   const ev = normalizeEvent(event);
-  const dtstart = formatICSDate(ev.start);
-  const dtend = formatICSDate(ev.end);
+  const fmt = event.allDay ? formatICSDateDay : formatICSDate;
+  const dtstart = fmt(ev.start);
+  const dtend = fmt(ev.end);
   if (!dtstart || !dtend) return null;
 
   const dtstamp = formatICSDate(new Date());
@@ -101,8 +108,9 @@ export function generateICS(event) {
 
 export function googleUrl(event) {
   const ev = normalizeEvent(event);
-  const start = formatICSDate(ev.start);
-  const end = formatICSDate(ev.end);
+  const fmt = event.allDay ? formatICSDateDay : formatICSDate;
+  const start = fmt(ev.start);
+  const end = fmt(ev.end);
   if (!start || !end) return null;
   const params = new URLSearchParams({
     action: 'TEMPLATE',
@@ -131,6 +139,19 @@ export function outlookUrl(event) {
 
 export function yahooUrl(event) {
   const ev = normalizeEvent(event);
+  if (event.allDay) {
+    const start = formatICSDateDay(ev.start);
+    if (!start) return null;
+    const params = new URLSearchParams({
+      v: '60', view: 'd', type: '20',
+      title: event.title || '',
+      st: start,
+      dur: '00',
+      desc: event.description || '',
+      in_loc: event.location || '',
+    });
+    return `https://calendar.yahoo.com/?${params}`;
+  }
   const start = formatICSDate(ev.start);
   if (!start) return null;
   const durMs = new Date(ev.end).getTime() - new Date(ev.start).getTime();
@@ -164,4 +185,4 @@ export function downloadICS(event) {
   URL.revokeObjectURL(url);
 }
 
-export { normalizeEvent, parseInTz, tzOffsetMs, escapeICS, formatICSDate, foldLine };
+export { normalizeEvent, parseInTz, tzOffsetMs, escapeICS, formatICSDate, formatICSDateDay, foldLine };
