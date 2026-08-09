@@ -1,20 +1,23 @@
 {
   "name": "@freshjuice/twistcal",
-  "version": "0.2.0",
+  "version": "0.2.0-beta.2",
   "type": "module",
   "description": "Lightweight zero-dependency Add to Calendar web component with Shadow DOM",
   "main": "dist/twistcal.min.js",
   "module": "dist/twistcal.esm.min.js",
   "exports": {
     ".": {
+      "types": "./dist/twistcal.d.ts",
       "import": "./dist/twistcal.esm.min.js",
       "default": "./dist/twistcal.min.js"
     },
     "./slim": {
+      "types": "./dist/twistcal.d.ts",
       "import": "./dist/twistcal.slim.esm.min.js",
       "default": "./dist/twistcal.slim.min.js"
     },
     "./generators": {
+      "types": "./dist/generators.d.ts",
       "import": "./dist/twistcal.generators.esm.min.js",
       "default": "./dist/twistcal.generators.min.js"
     },
@@ -33,6 +36,7 @@
     "dev": "node server.js",
     "prebuild": "node scripts/build-langs.js",
     "build": "rollup -c",
+    "postbuild": "node scripts/copy-types.js",
     "build:watch": "rollup -c -w",
     "test": "node --test test/*.test.mjs",
     "size": "gzip-size dist/twistcal.min.js"
