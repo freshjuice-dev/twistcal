@@ -74,7 +74,7 @@ const STYLES = `
 }
 .tc-item:hover { background: var(--tc-item-hover-bg, #f3f4f6); }
 .tc-item:focus-visible { outline: var(--tc-focus, 2px solid #60a5fa); outline-offset: var(--tc-focus-offset, -2px); }
-.tc-icon { width: var(--tc-icon-size, 16px); height: var(--tc-icon-size, 16px); flex-shrink: 0; }
+.tc-icon { width: var(--tc-icon-size, 16px); height: var(--tc-icon-size, 16px); flex-shrink: 0; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
 .tc-btn-icon { width: var(--tc-btn-icon-size, 16px); height: var(--tc-btn-icon-size, 16px); flex-shrink: 0; opacity: var(--tc-btn-icon-opacity, 0.8); }
 `;
 
