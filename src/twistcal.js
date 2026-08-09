@@ -123,7 +123,7 @@ if (typeof HTMLElement !== 'undefined') {
     const showBtnIcon = this.getAttribute('show-icon') !== 'false';
     const icon = (svg) => showIcons ? svg : '';
     const btnIcon = showBtnIcon ? BTN_ICON : '';
-    const all = ['google', 'outlook', 'yahoo', 'ics'];
+    const all = ['google', 'outlook', 'yahoo', 'ics', ...Object.keys(customCalendars)];
     const ikey = { google: 'google', outlook: 'outlook', yahoo: 'yahoo', ics: 'ical', ical: 'ical' };
     const calAttr = this.getAttribute('calendars') || this.getAttribute('services');
     const cals = calAttr
@@ -131,6 +131,11 @@ if (typeof HTMLElement !== 'undefined') {
       : all;
     const items = cals.map(c => {
       const action = c === 'ical' ? 'ics' : c;
+      const custom = customCalendars[c];
+      if (custom) {
+        const ic = showIcons && custom.icon ? custom.icon : '';
+        return `<a class="tc-item" role="menuitem" data-action="${c}" href="#" tabindex="0">${ic} ${custom.label}</a>`;
+      }
       const k = ikey[c] || c;
       return `<a class="tc-item" role="menuitem" data-action="${action}" href="#" tabindex="0">${icon(ICONS[k])} ${t.services[k]}</a>`;
     }).join('\n          ');
@@ -211,6 +216,14 @@ if (typeof HTMLElement !== 'undefined') {
       case 'ics':
         downloadICS(ev);
         break;
+      default: {
+        const custom = customCalendars[action];
+        if (custom && custom.urlFn) {
+          const u = custom.urlFn(ev);
+          if (u) window.open(u, '_blank', 'noopener');
+        }
+        break;
+      }
     }
   }
   };
@@ -231,7 +244,17 @@ export function createButton(target, event) {
   return el;
 }
 
-// ── Declarative triggers ───────────────────────────────────────────────────
+// ── Custom calendar registry ────────────────────────────────────────────
+
+const customCalendars = {};
+
+export function addCalendar(id, label, icon, urlFn) {
+  customCalendars[id] = { id, label, icon: icon || '', urlFn };
+}
+
+export function getCustomCalendars() {
+  return { ...customCalendars };
+}
 
 const TC_ATTR = 'data-twistcal';
 
@@ -259,6 +282,14 @@ function fireAction(action, event) {
     case 'outlook': { const u = outlookUrl(event); if (u) window.open(u, '_blank', 'noopener'); break; }
     case 'yahoo': { const u = yahooUrl(event); if (u) window.open(u, '_blank', 'noopener'); break; }
     case 'ics': downloadICS(event); break;
+    default: {
+      const custom = customCalendars[action];
+      if (custom && custom.urlFn) {
+        const u = custom.urlFn(event);
+        if (u) window.open(u, '_blank', 'noopener');
+      }
+      break;
+    }
   }
 }
 
@@ -296,4 +327,4 @@ if (typeof document !== 'undefined') {
 // Re-export generators so `import { ... } from '@freshjuice/twistcal'` still works
 export { generateICS, googleUrl, outlookUrl, yahooUrl, downloadICS, detectLanguage, getTranslation, supportedLanguages };
 
-export default { createButton, bindTrigger, autoInit, generateICS, googleUrl, outlookUrl, yahooUrl, downloadICS };
+export default { createButton, bindTrigger, autoInit, addCalendar, generateICS, googleUrl, outlookUrl, yahooUrl, downloadICS };
