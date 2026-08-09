@@ -58,13 +58,7 @@ const slimAlias = alias({
 });
 
 export default [
-  // Generators-only IIFE — pure logic, no DOM component, no icons, no i18n
-  {
-    input: 'src/generators.js',
-    output: iifeOutput('dist/twistcal.generators.min.js'),
-    plugins: [terser(terserOptions)],
-  },
-  // Generators-only ESM
+  // Generators-only ESM — pure logic, no DOM component, no icons, no i18n
   {
     input: 'src/generators.js',
     output: { file: 'dist/twistcal.generators.esm.min.js', format: 'es' },

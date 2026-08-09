@@ -76,6 +76,9 @@ const STYLES = `
 .tc-item:focus-visible { outline: var(--tc-focus, 2px solid #60a5fa); outline-offset: var(--tc-focus-offset, -2px); }
 .tc-icon { width: var(--tc-icon-size, 16px); height: var(--tc-icon-size, 16px); flex-shrink: 0; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
 .tc-btn-icon { width: var(--tc-btn-icon-size, 16px); height: var(--tc-btn-icon-size, 16px); flex-shrink: 0; opacity: var(--tc-btn-icon-opacity, 0.8); }
+.tc-brand { position: absolute; left: 0; right: 0; bottom: calc(-1 * (var(--tc-brand-fs, 11px) + 8px + 1px)); padding: var(--tc-brand-padding, 4px 2px 4px 12px); text-align: right; }
+.tc-brand a { font-size: var(--tc-brand-fs, 11px); color: var(--tc-brand-color, #9ca3af); text-decoration: none; }
+.tc-brand a:hover { color: var(--tc-brand-hover, #6b7280); }
 `;
 
 // Calendar icon for the button — Phosphor-style, baked in, tiny
@@ -106,6 +109,7 @@ if (typeof HTMLElement !== 'undefined') {
       location: this.getAttribute('location'),
       url: this.getAttribute('url'),
       timezone: this.getAttribute('timezone'),
+      allDay: this.getAttribute('all-day') === 'true',
     };
   }
 
@@ -119,7 +123,7 @@ if (typeof HTMLElement !== 'undefined') {
     const showBtnIcon = this.getAttribute('show-icon') !== 'false';
     const icon = (svg) => showIcons ? svg : '';
     const btnIcon = showBtnIcon ? BTN_ICON : '';
-    const all = ['google', 'outlook', 'yahoo', 'ics'];
+    const all = ['google', 'outlook', 'yahoo', 'ics', ...Object.keys(customCalendars)];
     const ikey = { google: 'google', outlook: 'outlook', yahoo: 'yahoo', ics: 'ical', ical: 'ical' };
     const calAttr = this.getAttribute('calendars') || this.getAttribute('services');
     const cals = calAttr
@@ -127,9 +131,16 @@ if (typeof HTMLElement !== 'undefined') {
       : all;
     const items = cals.map(c => {
       const action = c === 'ical' ? 'ics' : c;
+      const custom = customCalendars[c];
+      if (custom) {
+        const ic = showIcons && custom.icon ? custom.icon : '';
+        return `<a class="tc-item" role="menuitem" data-action="${c}" href="#" tabindex="0">${ic} ${custom.label}</a>`;
+      }
       const k = ikey[c] || c;
       return `<a class="tc-item" role="menuitem" data-action="${action}" href="#" tabindex="0">${icon(ICONS[k])} ${t.services[k]}</a>`;
     }).join('\n          ');
+    const showBranding = this.getAttribute('branding') !== 'false';
+    const branding = showBranding ? '<div class="tc-brand"><a href="https://twistcal.com" target="_blank" rel="noopener">Powered by TwistCal</a></div>' : '';
     root.innerHTML = `
       <style>${STYLES}</style>
       <div class="tc-wrap" data-variant="${variant}">
@@ -139,6 +150,7 @@ if (typeof HTMLElement !== 'undefined') {
         </button>
         <div class="tc-menu" role="menu">
           ${items}
+          ${branding}
         </div>
       </div>
     `;
@@ -154,6 +166,10 @@ if (typeof HTMLElement !== 'undefined') {
       const open = wrap.hasAttribute('open');
       wrap.toggleAttribute('open', !open);
       btn.setAttribute('aria-expanded', String(!open));
+      if (!open) {
+        const first = menu.querySelector('.tc-item');
+        if (first) first.focus();
+      }
     });
 
     document.addEventListener('click', (e) => {
@@ -167,6 +183,26 @@ if (typeof HTMLElement !== 'undefined') {
       if (e.key === 'Escape') {
         wrap.removeAttribute('open');
         btn.setAttribute('aria-expanded', 'false');
+        btn.focus();
+      }
+    });
+
+    menu.addEventListener('keydown', (e) => {
+      const items = [...menu.querySelectorAll('.tc-item')];
+      const idx = items.indexOf(document.activeElement);
+      if (idx === -1) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        items[(idx + 1) % items.length].focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        items[(idx - 1 + items.length) % items.length].focus();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        items[0].focus();
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        items[items.length - 1].focus();
       }
     });
 
@@ -183,6 +219,10 @@ if (typeof HTMLElement !== 'undefined') {
 
   _dispatch(action) {
     const ev = this._event;
+    this.dispatchEvent(new CustomEvent('twistcal:add', {
+      bubbles: true,
+      detail: { action, event: { ...ev } },
+    }));
     let url;
     switch (action) {
       case 'google':
@@ -200,6 +240,14 @@ if (typeof HTMLElement !== 'undefined') {
       case 'ics':
         downloadICS(ev);
         break;
+      default: {
+        const custom = customCalendars[action];
+        if (custom && custom.urlFn) {
+          const u = custom.urlFn(ev);
+          if (u) window.open(u, '_blank', 'noopener');
+        }
+        break;
+      }
     }
   }
   };
@@ -220,7 +268,17 @@ export function createButton(target, event) {
   return el;
 }
 
-// ── Declarative triggers ───────────────────────────────────────────────────
+// ── Custom calendar registry ────────────────────────────────────────────
+
+const customCalendars = {};
+
+export function addCalendar(id, label, icon, urlFn) {
+  customCalendars[id] = { id, label, icon: icon || '', urlFn };
+}
+
+export function getCustomCalendars() {
+  return { ...customCalendars };
+}
 
 const TC_ATTR = 'data-twistcal';
 
@@ -238,11 +296,24 @@ function parseEventFromAttrs(el) {
 }
 
 function fireAction(action, event) {
+  if (typeof document !== 'undefined' && document.dispatchEvent) {
+    document.dispatchEvent(new CustomEvent('twistcal:add', {
+      detail: { action, event: { ...event } },
+    }));
+  }
   switch (action) {
     case 'google': { const u = googleUrl(event); if (u) window.open(u, '_blank', 'noopener'); break; }
     case 'outlook': { const u = outlookUrl(event); if (u) window.open(u, '_blank', 'noopener'); break; }
     case 'yahoo': { const u = yahooUrl(event); if (u) window.open(u, '_blank', 'noopener'); break; }
     case 'ics': downloadICS(event); break;
+    default: {
+      const custom = customCalendars[action];
+      if (custom && custom.urlFn) {
+        const u = custom.urlFn(event);
+        if (u) window.open(u, '_blank', 'noopener');
+      }
+      break;
+    }
   }
 }
 
@@ -280,4 +351,4 @@ if (typeof document !== 'undefined') {
 // Re-export generators so `import { ... } from '@freshjuice/twistcal'` still works
 export { generateICS, googleUrl, outlookUrl, yahooUrl, downloadICS, detectLanguage, getTranslation, supportedLanguages };
 
-export default { createButton, bindTrigger, autoInit, generateICS, googleUrl, outlookUrl, yahooUrl, downloadICS };
+export default { createButton, bindTrigger, autoInit, addCalendar, generateICS, googleUrl, outlookUrl, yahooUrl, downloadICS };
