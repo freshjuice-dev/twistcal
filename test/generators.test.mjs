@@ -1,4 +1,4 @@
-import { generateICS, googleUrl, outlookUrl, yahooUrl } from '../src/twistcal.js';
+import { generateICS, googleUrl, outlookUrl, yahooUrl } from '../src/generators.js';
 import assert from 'node:assert/strict';
 
 const ev = {

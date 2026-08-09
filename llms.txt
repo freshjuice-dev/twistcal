@@ -1,6 +1,6 @@
 # TwistCal
 
-> Zero-dependency "Add to Calendar" web component + declarative triggers + programmatic API. Shadow DOM. Apache-2.0. 16 KB.
+> Zero-dependency "Add to Calendar" web component + declarative triggers + programmatic API. Shadow DOM. Apache-2.0. 19 KB minified (11 KB slim).
 
 ## Install
 
@@ -10,14 +10,23 @@ npm install @freshjuice/twistcal
 
 CDN (self-executing, no build step):
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@freshjuice/twistcal@0.1.0/src/twistcal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@freshjuice/twistcal/dist/twistcal.min.js"></script>
 ```
+
+## Build variants
+
+- `dist/twistcal.min.js` — IIFE, 19 KB, all 12 languages, with icons
+- `dist/twistcal.slim.min.js` — IIFE, 11 KB, all 12 languages, no icons
+- `dist/twistcal.esm.min.js` — ESM, 19 KB, for npm import
+- `dist/twistcal.slim.esm.min.js` — ESM, 11 KB, no icons
+- `dist/twistcal.{lang}.min.js` — single-language IIFE, 17 KB
+- `dist/twistcal.{lang}.slim.min.js` — single-language slim, 9 KB
 
 ## Three usage modes
 
 ### 1. Web component — `<twist-cal>`
 
-Renders a styled dropdown button (Google, Outlook, Yahoo, .ics). Auto-registers via `customElements.define()` on import.
+Renders a styled dropdown button. Auto-registers via `customElements.define()` on import.
 
 ```html
 <twist-cal
@@ -30,15 +39,15 @@ Renders a styled dropdown button (Google, Outlook, Yahoo, .ics). Auto-registers 
 </twist-cal>
 ```
 
-Attributes: `title` (required), `start` (required), `end` (required), `description`, `location`, `url`, `timezone` (IANA), `label` (default "Add to Calendar").
+Attributes: `title` (required), `start` (required), `end` (required), `description`, `location`, `url`, `timezone` (IANA), `label`, `lang` (auto-detected), `variant` (solid|outline), `show-icons` (true|false), `calendars` (comma-separated: google,outlook,yahoo,ics).
 
 Event data can also be passed as JSON via a child `<script type="application/json">`.
 
-Styling via CSS custom properties on the host: `--tc-btn-bg` (#2563eb), `--tc-btn-bg-hover` (#1d4ed8), `--tc-text` (#fff), `--tc-radius` (8px), `--tc-font` (system stack).
+Styling via CSS custom properties on the host: `--tc-btn-bg`, `--tc-btn-bg-hover`, `--tc-btn-border`, `--tc-btn-padding`, `--tc-btn-fs`, `--tc-btn-fw`, `--tc-btn-gap`, `--tc-text`, `--tc-border`, `--tc-caret-size`, `--tc-menu-bg`, `--tc-menu-border`, `--tc-menu-shadow`, `--tc-menu-padding`, `--tc-menu-min-w`, `--tc-menu-gap`, `--tc-item-color`, `--tc-item-hover-bg`, `--tc-item-padding`, `--tc-item-fs`, `--tc-item-gap`, `--tc-item-radius`, `--tc-icon-size`, `--tc-radius`, `--tc-font`, `--tc-focus`, `--tc-focus-offset`.
 
 ### 2. Declarative triggers — `data-twistcal`
 
-Any element with `data-twistcal` becomes a calendar trigger. Auto-initializes on `DOMContentLoaded`. No JS needed.
+Any element with `data-twistcal` becomes a calendar trigger. Auto-initializes on `DOMContentLoaded`.
 
 ```html
 <button data-twistcal
@@ -64,14 +73,26 @@ import {
   googleUrl,         // (event: object) => string | null
   outlookUrl,        // (event: object) => string | null
   yahooUrl,          // (event: object) => string | null
-  downloadICS        // (event: object) => void
+  downloadICS,       // (event: object) => void
+  detectLanguage,    // (configLang?: string) => string
+  getTranslation,    // (lang: string) => object
+  supportedLanguages // string[]
 } from '@freshjuice/twistcal';
+
+// Slim import (no icons, ~8 KB smaller):
+import { createButton } from '@freshjuice/twistcal/slim';
 ```
 
 Event object shape: `{ title, start, end, description?, location?, url?, timezone? }`
 
 - `start`/`end`: ISO 8601. With offset (`Z` or `+05:00`) → absolute time. Without offset → local time, converted to UTC.
 - `timezone`: IANA name (e.g. `Europe/Oslo`). Interprets naive `start`/`end` as wall-clock in that zone. DST-aware via `Intl.DateTimeFormat`. Ignored if `start`/`end` already carry an offset.
+
+## Internationalization
+
+12 languages: en, de, es, fr, it, pt, nl, pl, uk, ru, ja, zh.
+Auto-detected from `lang` attribute, `<html lang>`, or `navigator.language`.
+English fallback.
 
 ## Calendar services
 
