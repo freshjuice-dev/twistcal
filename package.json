@@ -7,14 +7,17 @@
   "module": "dist/twistcal.esm.min.js",
   "exports": {
     ".": {
+      "types": "./dist/twistcal.d.ts",
       "import": "./dist/twistcal.esm.min.js",
       "default": "./dist/twistcal.min.js"
     },
     "./slim": {
+      "types": "./dist/twistcal.d.ts",
       "import": "./dist/twistcal.slim.esm.min.js",
       "default": "./dist/twistcal.slim.min.js"
     },
     "./generators": {
+      "types": "./dist/generators.d.ts",
       "import": "./dist/twistcal.generators.esm.min.js",
       "default": "./dist/twistcal.generators.min.js"
     },
@@ -33,6 +36,7 @@
     "dev": "node server.js",
     "prebuild": "node scripts/build-langs.js",
     "build": "rollup -c",
+    "postbuild": "node scripts/copy-types.js",
     "build:watch": "rollup -c -w",
     "test": "node --test test/*.test.mjs",
     "size": "gzip-size dist/twistcal.min.js"
