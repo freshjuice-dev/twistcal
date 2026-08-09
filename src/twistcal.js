@@ -190,6 +190,10 @@ if (typeof HTMLElement !== 'undefined') {
 
   _dispatch(action) {
     const ev = this._event;
+    this.dispatchEvent(new CustomEvent('twistcal:add', {
+      bubbles: true,
+      detail: { action, event: { ...ev } },
+    }));
     let url;
     switch (action) {
       case 'google':
@@ -245,6 +249,11 @@ function parseEventFromAttrs(el) {
 }
 
 function fireAction(action, event) {
+  if (typeof document !== 'undefined' && document.dispatchEvent) {
+    document.dispatchEvent(new CustomEvent('twistcal:add', {
+      detail: { action, event: { ...event } },
+    }));
+  }
   switch (action) {
     case 'google': { const u = googleUrl(event); if (u) window.open(u, '_blank', 'noopener'); break; }
     case 'outlook': { const u = outlookUrl(event); if (u) window.open(u, '_blank', 'noopener'); break; }
