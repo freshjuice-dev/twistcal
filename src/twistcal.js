@@ -75,9 +75,11 @@ const STYLES = `
 .tc-item:hover { background: var(--tc-item-hover-bg, #f3f4f6); }
 .tc-item:focus-visible { outline: var(--tc-focus, 2px solid #60a5fa); outline-offset: var(--tc-focus-offset, -2px); }
 .tc-icon { width: var(--tc-icon-size, 16px); height: var(--tc-icon-size, 16px); flex-shrink: 0; }
+.tc-btn-icon { width: var(--tc-btn-icon-size, 16px); height: var(--tc-btn-icon-size, 16px); flex-shrink: 0; opacity: var(--tc-btn-icon-opacity, 0.8); }
 `;
 
-// ── Custom Element ───────────────────────────────────────────────────────
+// Calendar icon for the button — Phosphor-style, baked in, tiny
+const BTN_ICON = '<svg class="tc-btn-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M208 32H184V24a8 8 0 0 0-16 0v8H88V24a8 8 0 0 0-16 0v8H48A16 16 0 0 0 32 48V208a16 16 0 0 0 16 16H208a16 16 0 0 0 16-16V48A16 16 0 0 0 208 32ZM72 48v8a8 8 0 0 0 16 0V48h80v8a8 8 0 0 0 16 0V48h24V80H48V48ZM208 208H48V96H208V208Z"/></svg>';
 
 // Guard: the custom element only exists in a browser. In Node (tests, SSR),
 // the class declaration is skipped — the generator exports still work.
@@ -114,7 +116,9 @@ if (typeof HTMLElement !== 'undefined') {
     const label = this.getAttribute('label') || t.label;
     const variant = this.getAttribute('variant') || 'solid';
     const showIcons = this.getAttribute('show-icons') !== 'false';
+    const showBtnIcon = this.getAttribute('show-icon') !== 'false';
     const icon = (svg) => showIcons ? svg : '';
+    const btnIcon = showBtnIcon ? BTN_ICON : '';
     const all = ['google', 'outlook', 'yahoo', 'ics'];
     const ikey = { google: 'google', outlook: 'outlook', yahoo: 'yahoo', ics: 'ical', ical: 'ical' };
     const calAttr = this.getAttribute('calendars') || this.getAttribute('services');
@@ -130,7 +134,7 @@ if (typeof HTMLElement !== 'undefined') {
       <style>${STYLES}</style>
       <div class="tc-wrap" data-variant="${variant}">
         <button class="tc-btn" type="button" aria-haspopup="menu" aria-expanded="false">
-          <span>${label}</span>
+          ${btnIcon}<span>${label}</span>
           <span class="tc-caret" aria-hidden="true"></span>
         </button>
         <div class="tc-menu" role="menu">
