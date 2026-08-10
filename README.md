@@ -1,3 +1,5 @@
+![og-image](./demo/og-default.png)
+
 # TwistCal
 
 [![npm](https://img.shields.io/npm/v/@freshjuice/twistcal)](https://www.npmjs.com/package/@freshjuice/twistcal)
