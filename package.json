@@ -55,17 +55,10 @@
     "calendar-deeplink"
   ],
   "author": {
-    "name": "FreshJuice",
-    "email": "contact@freshjuice.dev",
-    "url": "https://freshjuice.dev/"
+    "name": "Alex Zappa",
+    "email": "alex@zappa.dev",
+    "url": "https://alex.zappa.dev/"
   },
-  "contributors": [
-    {
-      "name": "Alex Zappa",
-      "email": "alex@zappa.dev",
-      "url": "https://alex.zappa.dev/"
-    }
-  ],
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
